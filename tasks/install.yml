@@ -1,0 +1,22 @@
+---
+
+- name: Install | install firewalld
+  become: "{{ firewalld_become }}"
+  ansible.builtin.package:
+    name: firewalld
+    state: present
+
+- name: Install | enable and start firewalld
+  become: "{{ firewalld_become }}"
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Install | install package needed to gather ip and hostname
+  ansible.builtin.package:
+    name: "{{ item }}"
+  with_items:
+    - iproute
+    - hostname
+  become: True

@@ -1,0 +1,5 @@
+---
+
+firewalld_become: true
+standalone_role: True
+firewalld_default_zone: public

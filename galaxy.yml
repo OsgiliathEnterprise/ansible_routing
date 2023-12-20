@@ -1,0 +1,21 @@
+---
+namespace: "tcharl"
+name: "ansible_routing"
+version: "1.0.1"
+description: "Lets you configure simple port or port/IP redirections using firewalld masquerade"
+
+authors:
+  - "Charlie Mordant <cmordant1@gmail.com>"
+
+repository: "https://github.com/OsgiliathEnterprise/ansible_routing"
+documentation: "https://github.com/OsgiliathEnterprise/ansible_routing/blob/master/README.md"
+homepage: "https://github.com/OsgiliathEnterprise/ansible_routing"
+issues: "https://github.com/OsgiliathEnterprise/ansible_routing/issues"
+
+readme: "README.md"
+license:
+  - "Apache-2.0"
+tags:
+  - "firewalld"
+  - "rich-rules"
+  - "linux"
