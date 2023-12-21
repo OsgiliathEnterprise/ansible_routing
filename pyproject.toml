@@ -20,8 +20,7 @@ netaddr = "^0.8.0"
 flake8 = "*"
 yamllint = "*"
 pytest-testinfra = "*"
-docker = "*"
-molecule-plugins = {version = "*", extras = ["docker"]}
+molecule-plugins = {version = "^v23.4.1", extras = ["podman"]}
 ansible-lint = {version = "^v6.22.1", markers = "platform_system != 'Windows'" }
 
 [build-system]
