@@ -22,9 +22,6 @@ platforms:
     cgroupns_mode: host
     # network: "firewalld_network"
     # subnet: '10.3.1.0/24'
-    tmpfs:
-      - /run
-      - /tmp
     dns_servers:
       - 8.8.8.8
     capabilities:
@@ -33,6 +30,9 @@ platforms:
     # pre_build_image: true
 provisioner:
   name: ansible
+  config_options:
+    defaults:
+      remote_tmp: /tmp
 verifier:
   name: testinfra
   env:
