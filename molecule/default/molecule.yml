@@ -26,9 +26,9 @@ platforms:
       - /tmp
     dns_servers:
       - 8.8.8.8
-#    capabilities:
-#      - SYS_ADMIN
-#      - CAP_SYS_TIME
+    capabilities:
+      - SYS_ADMIN
+      - CAP_SYS_TIME
     # pre_build_image: true
 provisioner:
   name: ansible
