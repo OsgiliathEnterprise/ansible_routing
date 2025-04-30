@@ -4,3 +4,4 @@
 .tox
 build
 dist
+molecule/default/tests/__pycache__
