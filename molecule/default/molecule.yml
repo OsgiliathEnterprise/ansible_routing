@@ -8,7 +8,7 @@ dependency:
 driver:
   name: podman
 platforms:
-  - name: proxy.osgiliath.test
+  - name: routing.osgiliath.test
     image: fedora:38
     # image: ubi9/ubi-init:latest
     dockerfile: ../common/Dockerfile.j2

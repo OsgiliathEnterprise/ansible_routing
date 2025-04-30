@@ -19,7 +19,7 @@
             family: ipv4
             from_port: 6755
             protocol: tcp
-            to_host: "proxy.osgiliath.test"
+            to_host: "routing.osgiliath.test"
             to_port: 22
         enabled_services:
           - service: ssh
