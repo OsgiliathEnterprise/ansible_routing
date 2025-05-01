@@ -3,7 +3,7 @@ dependency:
   name: galaxy
   enabled: ${DEPENDENCY_ENABLED:-True}
   options:
-    role-file: ${REQUIREMENTS_PATH:-requirements-standalone.yml}
+    role-file: ${REQUIREMENTS_PATH:-requirements.yml}
     requirements-file: requirements-collections.yml
 driver:
   name: podman
