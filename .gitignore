@@ -1,6 +1,7 @@
 .idea
 **/__pychache__
 .cache
+.poetry
 .tox
 build
 dist

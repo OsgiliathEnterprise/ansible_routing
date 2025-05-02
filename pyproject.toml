@@ -22,7 +22,7 @@ yamllint = "*"
 tox = "*"
 pytest-testinfra = "*"
 molecule = "25.1.0"
-molecule-plugins = {version = "*", extras = ["podman"]} # https://github.com/ansible-community/molecule-plugins/pull/237
+molecule-plugins = {version = "23.4.1", extras = ["podman"]} # https://github.com/ansible-community/molecule-plugins/pull/237
 ansible-lint = { version = "v25.4.0", markers = "platform_system != 'Windows'" }
 
 [build-system]
