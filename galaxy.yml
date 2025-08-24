@@ -17,5 +17,5 @@ license:
   - "Apache-2.0"
 tags:
   - "firewalld"
-  - "rich-rules"
+  - "rich_rules"
   - "linux"

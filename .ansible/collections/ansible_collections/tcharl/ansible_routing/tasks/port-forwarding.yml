@@ -1,0 +1,63 @@
+---
+
+- name: Port-forwarding | Redirect port
+  become: "{{ firewalld_become }}"
+  ansible.posix.firewalld:
+    rich_rule: >
+      rule family={{ forward_rule.family | default('ipv4') }}
+      forward-port port={{ forward_rule.from_port | int }}
+      protocol={{ forward_rule.protocol | default('tcp') }}
+      to-port={{ forward_rule.to_port | int }}
+      log prefix={{ forward_rule.port_forward_rule }}
+    zone: "{{ zone.name | default(firewalld_default_zone) }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  notify: ansible-routing | handler | reload-firewall
+  when:
+   - not forward_rule.to_address is defined
+   - not forward_rule.to_host is defined
+
+- name: Port-forwarding | retrieve target fact
+  ansible.builtin.setup:
+  register: targethostfacts
+  delegate_facts: true
+  delegate_to: "{{ forward_rule.to_ansible_host | default(forward_rule.to_host) }}"
+  become: True
+  when:
+   - forward_rule.to_host is defined
+
+- name: Port-forwarding | debug target fact
+  ansible.builtin.debug:
+    msg: "{{ targethostfacts }}"
+    verbosity: 3
+
+- name: Port-forwarding | compute ip if preferred_nic is not set
+  ansible.builtin.debug:
+    msg: "{{ targethostfacts.ansible_facts['ansible_' + preferred_nic | replace('-', '_')].ipv4.address if preferred_nic is defined and targethostfacts.ansible_facts['ansible_' + preferred_nic | replace('-', '_')] is defined else targethostfacts.ansible_facts.ansible_default_ipv4.address | default(targethostfacts.ansible_facts.ansible_all_ipv4_addresses[0]) }}"
+  when:
+    - forward_rule.to_host is defined
+  register: targethostfacts_ip
+
+- name: Port-forwarding | compute redirect ip
+  ansible.builtin.debug:
+    msg: "{{ forward_rule.to_address if forward_rule.to_address is defined else targethostfacts_ip.msg }}"
+  register: forwardrule_address
+  when: forward_rule.to_host is defined or forward_rule.to_address is defined
+
+- name: Port-forwarding | Redirect ip
+  become: "{{ firewalld_become }}"
+  ansible.posix.firewalld:
+    rich_rule: >
+      rule family={{ forward_rule.family | default('ipv4') }}
+      forward-port port={{ forward_rule.from_port | int }}
+      protocol={{ forward_rule.protocol | default('tcp') }}
+      to-addr={{ forwardrule_address.msg | ansible.utils.ipaddr }}
+      to-port={{ forward_rule.to_port | int }}
+      log prefix={{ forward_rule.port_forward_rule }}
+    zone: "{{ zone.name | default(firewalld_default_zone) }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  notify: ansible-routing | handler | reload-firewall
+  when: forward_rule.to_address is defined or forward_rule.to_host is defined

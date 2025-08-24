@@ -1,0 +1,76 @@
+---
+
+- name: Zone | gather host facts
+  ansible.builtin.setup:
+  register: hostfacts
+
+- name: Zone | debug host facts
+  ansible.builtin.debug:
+    var: hostfacts
+    verbosity: 3
+  when: not zone.nics is defined
+
+- name: Zone | create zones - activate zone
+  ansible.posix.firewalld:
+    zone: "{{ zone.name | default(firewalld_default_zone) }}"
+    state: present
+    permanent: true
+  become: "{{ firewalld_become }}"
+
+- name: Zone | create zones - without permanent
+  ansible.posix.firewalld:
+    zone: "{{ zone.name | default(firewalld_default_zone) }}"
+    immediate: true
+    state: enabled
+  become: "{{ firewalld_become }}"
+
+- name: Zone | create zones
+  ansible.posix.firewalld:
+    zone: "{{ zone.name | default(firewalld_default_zone) }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  become: "{{ firewalld_become }}"
+
+- name: Zone | affect nics
+  ansible.posix.firewalld:
+    zone: "{{ zone.name | default(firewalld_default_zone) }}"
+    permanent: true
+    immediate: true
+    interface: "{{ unaffectednic }}"
+    state: enabled
+  loop: "{{ zone.nics | list | default(hostfacts.ansible_facts.ansible_interfaces) }}"
+  loop_control:
+    loop_var: unaffectednic
+  when: zone.nics is defined
+  become: "{{ firewalld_become }}"
+
+- name: Zone | configure firewalld masquerade
+  ansible.posix.firewalld:
+    masquerade: True
+    state: enabled
+    permanent: True
+    zone: "{{ zone.name | default(firewalld_default_zone) }}"
+  notify: ansible-routing | handler | reload-firewall
+  become: "{{ firewalld_become }}"
+
+- name: Zone | debug zone
+  ansible.builtin.debug:
+    var: zone
+    verbosity: 3
+
+- name: Zone | debug port forward loop
+  ansible.builtin.debug:
+    var: forward_rule.port_forward_rule
+  loop: "{{ zone.port_forward_rules | default([]) }}"
+  loop_control:
+    loop_var: forward_rule
+
+- name: Zone | configure forwarding
+  ansible.builtin.include_tasks: port-forwarding.yml
+  loop: "{{ zone.port_forward_rules | default([]) }}"
+  loop_control:
+    loop_var: forward_rule
+
+- name: Zone | configure ports and services
+  ansible.builtin.include_tasks: services-ports.yml

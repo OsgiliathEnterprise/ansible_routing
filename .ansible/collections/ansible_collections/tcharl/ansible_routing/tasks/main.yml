@@ -1,0 +1,15 @@
+---
+# tasks file for ansible-routing
+- name: Install firewalld
+  ansible.builtin.import_tasks: install.yml
+
+- name: Export facts
+  ansible.builtin.include_tasks: facts.yml
+
+- name: Configure zones
+  ansible.builtin.include_tasks: zone.yml
+  when: firewalld_zones is defined
+  loop: "{{ firewalld_zones }}"
+  loop_control:
+    label: "{{ zone.name }}"
+    loop_var: zone
