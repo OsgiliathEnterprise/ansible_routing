@@ -1,4 +1,5 @@
 .idea
+.ansible
 **/__pychache__
 .cache
 .poetry
