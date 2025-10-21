@@ -6,17 +6,12 @@
   with_items:
     - iproute
     - hostname
-  become: True
-
-- name: Install | install firewalld
+    - firewalld
   become: "{{ firewalld_become }}"
-  ansible.builtin.package:
-    name: firewalld
-    state: present
 
 - name: Install | enable and start firewalld
-  become: "{{ firewalld_become }}"
   ansible.builtin.service:
     name: firewalld
     state: started
     enabled: true
+  become: "{{ firewalld_become }}"
