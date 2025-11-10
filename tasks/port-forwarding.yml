@@ -13,7 +13,6 @@
     permanent: yes
     immediate: yes
     state: enabled
-  notify: ansible-routing | handler | reload-firewall
   when:
    - not forward_rule.to_address is defined
    - not forward_rule.to_host is defined
@@ -59,5 +58,4 @@
     permanent: yes
     immediate: yes
     state: enabled
-  notify: ansible-routing | handler | reload-firewall
   when: forward_rule.to_address is defined or forward_rule.to_host is defined
