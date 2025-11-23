@@ -17,6 +17,7 @@
 - name: Zone | debug zone to set
   ansible.builtin.debug:
     var: routing_zone
+    verbosity: 1
 
 - name: Zone | create zones - activate zone
   ansible.posix.firewalld:
@@ -36,13 +37,13 @@
 - name: Zone | debug zone
   ansible.builtin.debug:
     var: zone
-   # verbosity: 1
+    verbosity: 1
 
 - name: Zone | debug Nics
   ansible.builtin.debug:
     msg: "{{ zone.nics | list | default([]) }}"
+    verbosity: 1
   when: zone.nics is defined
-   # verbosity: 1
 
 
 - name: Zone | debug port forward loop
