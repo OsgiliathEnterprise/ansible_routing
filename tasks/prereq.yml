@@ -1,0 +1,65 @@
+---
+
+- name: Activate br_netfilter kernel module
+  community.general.modprobe:
+    name: "{{ item }}"
+    state: present
+    persistent: present
+  loop:
+    - "br_netfilter"
+  become: true
+
+- name: Permanently allow ipv4 traffic forwarding on host nic
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+  become: yes
+
+- name: Permanently allow ipv6 traffic forwarding on host nic
+  ansible.posix.sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: '0'
+    sysctl_set: yes
+    state: present
+    reload: yes
+  become: yes
+
+- name: Activate bridge nf
+  ansible.posix.sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: '0'
+    sysctl_set: true
+    state: present
+    reload: true
+  become: true
+
+- name: Activate bridge-nf-call-ip6tables
+  ansible.posix.sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: '0'
+    sysctl_set: true
+    state: present
+    reload: true
+  become: true
+
+- name: Activate bridge-nf-call-arptables
+  ansible.posix.sysctl:
+    name: net.bridge.bridge-nf-call-arptables
+    value: '1'
+    sysctl_set: true
+    state: present
+    reload: true
+  become: true
+
+- name: Increase conntrack max
+  ansible.posix.sysctl:
+    name: net.netfilter.nf_conntrack_max
+    value: '1000000'
+    sysctl_set: true
+    state: present
+    reload: true
+  failed_when: False # absent on some distro
+  become: true

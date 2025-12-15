@@ -1,5 +1,8 @@
 ---
 # tasks file for ansible-routing
+- name: Disable ipv6 and configure proper system properties
+  ansible.builtin.import_tasks: prereq.yml
+
 - name: Install firewalld
   ansible.builtin.import_tasks: install.yml
 
