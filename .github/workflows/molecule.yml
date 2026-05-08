@@ -72,12 +72,20 @@ jobs:
         run: |
           pip3 install wheel setuptools tox
           range=100000-200000
-          sudo usermod --add-subuids $range --add-subgids $range $(whoami)
-          sudo chmod 0755 /usr/bin/newuidmap /usr/bin/newgidmap
-      - name: Test with podman
-        env:
-            DOCKER_HOST: unix:///run/user/1001/podman/podman.sock # Check if UID is 1001
+      - name: Configure Podman for CI
         run: |
-          systemctl --user start podman.socket || true
+          # Ensure the config directory exists
+          mkdir -p ~/.config/containers
+          
+          # Force Podman to use the 'vfs' storage driver if 'overlay' fails in CI
+          # and ensure it knows where to find the subuids
+          echo -e "[storage]\ndriver = \"overlay\"\n[storage.options.overlay]\nmount_program = \"/usr/bin/fuse-overlayfs\"" > ~/.config/containers/storage.conf
+          
+          # Initialize the user namespace
+          podman system migrate
+
+      - name: Test with podman
+        run: |
           cd tcharl.ansible_routing
-          tox -e test-exec
+          # Use podman unshare to wrap the execution in the correct namespace
+          podman unshare tox -e test-exec
