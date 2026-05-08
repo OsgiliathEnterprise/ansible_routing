@@ -13,4 +13,3 @@
       ansible.builtin.raw: timeout 30 systemctl is-system-running --wait || true
       changed_when: false
       become: true
-

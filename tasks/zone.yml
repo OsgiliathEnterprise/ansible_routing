@@ -23,7 +23,6 @@
   ansible.posix.firewalld:
     zone: "{{ routing_zone }}"
     state: present
-    masquerade: "{{ zone.masquerade | default(false) }}"
     permanent: true
   become: "{{ firewalld_become }}"
 
