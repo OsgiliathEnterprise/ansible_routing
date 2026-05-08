@@ -78,4 +78,4 @@ jobs:
       - name: Test with podman
         run: |
           cd tcharl.ansible_routing
-          sudo env "PATH=$PATH" "$(command -v tox)" -e test-exec
+          sudo tox -e test-exec
