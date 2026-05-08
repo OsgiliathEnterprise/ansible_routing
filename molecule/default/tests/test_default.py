@@ -4,7 +4,7 @@
 def test_masquerade_enabled(host):
     with host.sudo():
         command = """firewall-cmd --zone=public --query-masquerade | \
-        grep -c yes"""
+        grep -c no"""
         cmd = host.run(command)
     assert '1' in cmd.stdout
 

@@ -30,7 +30,7 @@
 - name: Activate bridge nf
   ansible.posix.sysctl:
     name: net.bridge.bridge-nf-call-iptables
-    value: '0'
+    value: '1'
     sysctl_set: true
     state: present
     reload: true
@@ -39,7 +39,7 @@
 - name: Activate bridge-nf-call-ip6tables
   ansible.posix.sysctl:
     name: net.bridge.bridge-nf-call-ip6tables
-    value: '0'
+    value: '1'
     sysctl_set: true
     state: present
     reload: true
