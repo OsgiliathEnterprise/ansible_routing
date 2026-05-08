@@ -11,18 +11,39 @@ ENV {{ var }} {{ value }}
 		{% endif %}
 	{% endfor %}
 {% endif %}
-{% if item.volumes is defined %}
-VOLUME ["/sys/fs/cgroup"]
-{% endif %}
-RUN dnf -y install systemd python3 && dnf clean all
-#  && \ (cd /lib/systemd/system/sysinit.target.wants/ ; for i in * ; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i ; done) ; \
-#  rm -f /lib/systemd/system/multi-user.target.wants/* ;\
-#  rm -f /etc/systemd/system/*.wants/* ;\
-#  rm -f /lib/systemd/system/local-fs.target.wants/* ; \
-#  rm -f /lib/systemd/system/sockets.target.wants/*udev* ; \
-#  rm -f /lib/systemd/system/sockets.target.wants/*initctl* ; \
-#  rm -f /lib/systemd/system/basic.target.wants/* ;\
-#  rm -f /lib/systemd/system/anaconda.target.wants/*
+# Tweak firewalld configuration to work in a container and be close to real machines
+
+RUN dnf -y install \
+      systemd \
+      python3 \
+      firewalld \
+      iptables \
+      iptables-nft \
+      dbus \
+      dbus-daemon \
+      polkit \
+      NetworkManager \
+      iproute \
+      hostname && \
+    dnf clean all && \
+    # Force iptables backend: nftables doesn't work inside unprivileged containers
+    sed -i 's/FirewallBackend=nftables/FirewallBackend=iptables/g' /etc/firewalld/firewalld.conf && \
+    sed -i 's/IndividualCalls=no/IndividualCalls=yes/g' /etc/firewalld/firewalld.conf && \
+    # firewalld hardening uses mount namespace operations blocked in rootless containers
+    mkdir -p /etc/systemd/system/firewalld.service.d && \
+    printf '%s\n' '[Service]' 'ProtectHostname=no' 'ProtectControlGroups=no' > /etc/systemd/system/firewalld.service.d/10-container-compat.conf && \
+    # Mask units that are truly incompatible with containers (hardware/host-ns dependent)
+    systemctl mask \
+      dev-hugepages.mount \
+      sys-fs-fuse-connections.mount \
+      systemd-hwdb-update.service \
+      systemd-update-utmp.service \
+      systemd-update-utmp-runlevel.service \
+      getty.target \
+      console-getty.service && \
+    # Remove udev socket triggers that need a real host (cause boot hangs in container)
+    rm -f /lib/systemd/system/sockets.target.wants/*udev* && \
+    rm -f /lib/systemd/system/sockets.target.wants/*initctl*
 {% if item.command is defined %}
 CMD ["{{ item.command }}"]
 {% endif %}

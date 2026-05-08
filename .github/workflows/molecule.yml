@@ -71,21 +71,19 @@ jobs:
       - name: pip install packages
         run: |
           pip3 install wheel setuptools tox
-          range=100000-200000
-      - name: Configure Podman for CI
+      - name: Setup Podman Rootless
         run: |
-          # Ensure the config directory exists
-          mkdir -p ~/.config/containers
-          
-          # Force Podman to use the 'vfs' storage driver if 'overlay' fails in CI
-          # and ensure it knows where to find the subuids
-          echo -e "[storage]\ndriver = \"overlay\"\n[storage.options.overlay]\nmount_program = \"/usr/bin/fuse-overlayfs\"" > ~/.config/containers/storage.conf
-          
-          # Initialize the user namespace
+          # Clean up any partial UID attempts and initialize storage
           podman system migrate
+          # Ensure the storage driver is set to overlay for performance/compatibility
+          mkdir -p ~/.config/containers
+          echo -e "[storage]\ndriver = \"overlay\"\n[storage.options.overlay]\nmount_program = \"/usr/bin/fuse-overlayfs\"" > ~/.config/containers/storage.conf
 
       - name: Test with podman
+        env:
+          # This forces Molecule to use the user's podman instance
+          CONTAINER_HOST: unix:///run/user/$(id -u)/podman/podman.sock
         run: |
           cd tcharl.ansible_routing
-          # Use podman unshare to wrap the execution in the correct namespace
+          # Use podman unshare to ensure we are in a proper user namespace
           podman unshare tox -e test-exec
