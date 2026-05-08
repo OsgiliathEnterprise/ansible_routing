@@ -86,4 +86,4 @@ jobs:
         run: |
           cd tcharl.ansible_routing
           # Use podman unshare to ensure we are in a proper user namespace
-          podman unshare tox -e test-exec
+          tox -e test-exec
