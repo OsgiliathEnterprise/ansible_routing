@@ -71,6 +71,9 @@ jobs:
       - name: pip install packages
         run: |
           pip3 install wheel setuptools tox
+          range=100000-200000
+          sudo usermod --add-subuids $range --add-subgids $range $(whoami)
+          chmod 0755 /usr/bin/newuidmap /usr/bin/newgidmap
       - name: Test with podman
         run: |
           cd tcharl.ansible_routing
