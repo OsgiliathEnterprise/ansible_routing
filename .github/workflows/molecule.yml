@@ -75,6 +75,9 @@ jobs:
           sudo usermod --add-subuids $range --add-subgids $range $(whoami)
           sudo chmod 0755 /usr/bin/newuidmap /usr/bin/newgidmap
       - name: Test with podman
+        env:
+            DOCKER_HOST: unix:///run/user/1001/podman/podman.sock # Check if UID is 1001
         run: |
+          systemctl --user start podman.socket || true
           cd tcharl.ansible_routing
           tox -e test-exec
