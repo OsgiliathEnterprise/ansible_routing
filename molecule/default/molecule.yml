@@ -14,19 +14,12 @@ platforms:
     dockerfile: ../common/Dockerfile.j2
     # registry:
     #   url: registry.access.redhat.com
-    privileged: false  # Rootless Podman is already 'safe', privileged often breaks CI namespaces
+    privileged: True
     command: "/sbin/init"
-    #systemd: True  #<-- This is often redundant if using a systemd-ready image or command
-    tmpfs:
-      /run: rw,size=256m
-      /run/lock: rw,size=64m
-      /tmp: rw,size=512m
-    capabilities:
-      - SYS_ADMIN # Gives systemd what it needs without full 'privileged' mode
-      - NET_ADMIN
-      - NET_RAW
-      - MKNOD
-    cgroupns_mode: private # 'host' usually fails in rootless CI
+    systemd: True
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
     dns_servers:
       - 8.8.8.8
 #    capabilities:

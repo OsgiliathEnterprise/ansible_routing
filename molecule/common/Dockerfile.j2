@@ -14,13 +14,7 @@ ENV {{ var }} {{ value }}
 {% if item.volumes is defined %}
 VOLUME ["/sys/fs/cgroup"]
 {% endif %}
-RUN dnf -y install systemd python3 firewalld iptables && \
-    dnf clean all && \
-    sed -i 's/FirewallBackend=nftables/FirewallBackend=iptables/g' /etc/firewalld/firewalld.conf && \
-    sed -i 's/IndividualCalls=no/IndividualCalls=yes/g' /etc/firewalld/firewalld.conf && \
-    mkdir -p /etc/systemd/system/firewalld.service.d && \
-	printf '[Service]\nProtectSystem=no\nProtectKernelTunables=no\nProtectControlGroups=no\nPrivateTmp=no\nProtectKernelModules=no\nPrivateDevices=no\nProtectKernelLogs=no\nProtectHostname=no\nRestrictAddressFamilies=\n' \
-        > /etc/systemd/system/firewalld.service.d/container.conf
+RUN dnf -y install systemd && dnf clean all
 #  && \ (cd /lib/systemd/system/sysinit.target.wants/ ; for i in * ; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i ; done) ; \
 #  rm -f /lib/systemd/system/multi-user.target.wants/* ;\
 #  rm -f /etc/systemd/system/*.wants/* ;\

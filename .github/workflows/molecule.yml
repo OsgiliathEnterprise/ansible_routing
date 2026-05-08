@@ -71,19 +71,11 @@ jobs:
       - name: pip install packages
         run: |
           pip3 install wheel setuptools tox
-      - name: Setup Podman Rootless
+      - name: Show Podman info
         run: |
-          # Clean up any partial UID attempts and initialize storage
-          podman system migrate
-          # Ensure the storage driver is set to overlay for performance/compatibility
-          mkdir -p ~/.config/containers
-          echo -e "[storage]\ndriver = \"overlay\"\n[storage.options.overlay]\nmount_program = \"/usr/bin/fuse-overlayfs\"" > ~/.config/containers/storage.conf
+          sudo podman info
 
       - name: Test with podman
-        env:
-          # This forces Molecule to use the user's podman instance
-          CONTAINER_HOST: unix:///run/user/$(id -u)/podman/podman.sock
         run: |
           cd tcharl.ansible_routing
-          # Use podman unshare to ensure we are in a proper user namespace
-          tox -e test-exec
+          sudo env "PATH=$PATH" "$(command -v tox)" -e test-exec
