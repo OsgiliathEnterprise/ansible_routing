@@ -76,6 +76,18 @@ jobs:
           sudo podman info
 
       - name: Test with podman
+        env:
+          ANSIBLE_REMOTE_TMP: /var/tmp/ansible-remote
         run: |
           cd tcharl.ansible_routing
           sudo tox -e test-exec
+
+      - name: Dump podman diagnostics on failure
+        if: failure()
+        run: |
+          sudo podman ps -a || true
+          sudo podman images || true
+          sudo podman network ls || true
+          sudo podman logs routing.osgiliath.test || true
+          sudo podman inspect routing.osgiliath.test || true
+

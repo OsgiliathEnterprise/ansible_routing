@@ -14,7 +14,9 @@ ENV {{ var }} {{ value }}
 {% if item.volumes is defined %}
 VOLUME ["/sys/fs/cgroup"]
 {% endif %}
-RUN dnf -y install systemd && dnf clean all
+RUN dnf -y install systemd && dnf clean all && \
+	mkdir -p /var/tmp/ansible-remote && \
+	chmod 1777 /var/tmp/ansible-remote
 #  && \ (cd /lib/systemd/system/sysinit.target.wants/ ; for i in * ; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i ; done) ; \
 #  rm -f /lib/systemd/system/multi-user.target.wants/* ;\
 #  rm -f /etc/systemd/system/*.wants/* ;\
