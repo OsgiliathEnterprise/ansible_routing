@@ -47,7 +47,6 @@
     verbosity: 1
   when: zone.nics is defined
 
-
 - name: Zone | debug port forward loop
   ansible.builtin.debug:
     var: forward_rule.port_forward_rule
