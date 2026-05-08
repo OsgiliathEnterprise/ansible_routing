@@ -67,7 +67,10 @@ jobs:
 #          sudo apt upgrade
       - name: install aptitude packages
         run: |
-          sudo apt -y install sudo python3 python3-pip python3-wheel python3-setuptools python3-tox podman
+          sudo apt -y install sudo python3 python3-pip python3-wheel python3-setuptools podman
+      - name: pip install packages
+        run: |
+          sudo pip3 install tox
       - name: Show Podman info
         run: |
           sudo podman info
