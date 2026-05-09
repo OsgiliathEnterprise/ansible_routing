@@ -71,10 +71,6 @@ jobs:
       - name: pip install packages
         run: |
           sudo pip3 install -I tox
-      - name: Show Podman info
-        run: |
-          sudo podman info
-
       - name: Test with podman
         env:
           ANSIBLE_REMOTE_TMP: /var/tmp/ansible-remote
