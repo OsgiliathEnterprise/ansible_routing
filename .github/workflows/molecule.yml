@@ -73,7 +73,7 @@ jobs:
           sudo pip3 install -I tox
       - name: Test with podman
         env:
-          ANSIBLE_REMOTE_TMP: /var/tmp/ansible-remote
+          
         run: |
           cd tcharl.ansible_routing
           sudo tox -e test-exec

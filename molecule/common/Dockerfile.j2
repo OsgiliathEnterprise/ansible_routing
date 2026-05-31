@@ -16,8 +16,8 @@ VOLUME ["/sys/fs/cgroup"]
 {% endif %}
 RUN dnf -y install systemd python3 python3-libdnf5 && \
     dnf clean all && \
-	mkdir -p /var/tmp/ansible-remote && \
-	chmod 1777 /var/tmp/ansible-remote
+	mkdir -p /tmp/.ansible/tmp && \
+	chmod 1777 /tmp/.ansible/tmp
 #  && \ (cd /lib/systemd/system/sysinit.target.wants/ ; for i in * ; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i ; done) ; \
 #  rm -f /lib/systemd/system/multi-user.target.wants/* ;\
 #  rm -f /etc/systemd/system/*.wants/* ;\
