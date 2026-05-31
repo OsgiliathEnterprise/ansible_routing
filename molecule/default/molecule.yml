@@ -30,6 +30,7 @@ provisioner:
   name: ansible
   env:
     ANSIBLE_COLLECTIONS_PATH: "${MOLECULE_PROJECT_DIRECTORY}/../community-collections:${HOME}/.ansible/collections:/usr/share/ansible/collections"
+    ANSIBLE_REMOTE_TMP: /var/tmp/ansible-remote
     ANSIBLE_ASYNC_DIR: "/tmp/.ansible_async"
   options:
     vvv: True
