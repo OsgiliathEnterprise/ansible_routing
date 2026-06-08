@@ -18,7 +18,7 @@
    - not forward_rule.to_host is defined
    - not forward_rule.to_ansible_host is defined
 
-- name : Port-forwarding | forward rule to host is defined # should be duplicated because delegate_to is evaluated before when clause
+- name: Port-forwarding | forward rule to host is defined # should be duplicated because delegate_to is evaluated before when clause
   ansible.builtin.include_tasks: port-forwarding-to-host.yml
   when: forward_rule.to_host is defined or foward_rule.to_ansible_host is defined
 
