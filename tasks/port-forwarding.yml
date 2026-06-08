@@ -33,7 +33,7 @@
 
 - name: Port-forwarding | compute ip if preferred_nic is not set
   ansible.builtin.debug:
-    msg: "{{ targethostfacts.ansible_facts['ansible_' + preferred_nic | replace('-', '_')].ipv4.address if preferred_nic is defined and targethostfacts.ansible_facts['ansible_' + preferred_nic | replace('-', '_')] is defined else targethostfacts.ansible_facts.ansible_default_ipv4.address | default(targethostfacts.ansible_facts.ansible_all_ipv4_addresses[0]) }}"
+    msg: "{{ targethostfacts.ansible_facts['ansible_' ~ (preferred_nic | replace('-', '_'))].ipv4.address if preferred_nic is defined else targethostfacts.ansible_facts.ansible_default_ipv4.address | default(targethostfacts.ansible_facts.ansible_all_ipv4_addresses[0]) }}"
   when:
     - forward_rule.to_host is defined
   register: targethostfacts_ip

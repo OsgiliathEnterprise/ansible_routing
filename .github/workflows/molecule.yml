@@ -14,66 +14,58 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   requirements:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
           path: tcharl.ansible_routing
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install uv
+        run: python -m pip install --upgrade uv
       - name: install prereq
         run: |
           cd tcharl.ansible_routing
-          ansible-galaxy role install -r requirements.yml
-          ansible-galaxy collection install -r requirements-collections.yml
+          uv tool run --python 3.13 --from ansible-core ansible-galaxy role install -r requirements.yml
+          uv tool run --python 3.13 --from ansible-core ansible-galaxy collection install -r requirements-collections.yml
   lint:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
           path: tcharl.ansible_routing
-      - name: update apt
-        run: |
-          sudo apt update
-      - name: install aptitude packages
-        run: |
-          sudo apt -y install sudo python3 python3-pip
-      - name: pip install packages
-        run: |
-          pip3 install wheel setuptools tox
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install uv
+        run: python -m pip install --upgrade uv
       - name: tox lint
         run: |
           cd tcharl.ansible_routing
-          tox -e lint
+          uv tool run --python 3.13 --with tox tox -e lint
   test:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
           path: tcharl.ansible_routing
-      - name: update apt
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install aptitude packages
         run: |
           sudo apt update
-#      - name: apt upgrade
-#        run: |
-#          sudo apt upgrade
-      - name: install aptitude packages
+          sudo apt -y install sudo python3 python3-pip podman
+      - name: Install uv
         run: |
-          sudo apt -y install sudo python3 python3-pip python3-wheel python3-setuptools podman
-      - name: pip install packages
-        run: |
-          sudo pip3 install -I tox
+          sudo pip install uv
       - name: Test with podman
         env:
           ANSIBLE_REMOTE_TMP: /var/tmp/ansible-remote
         run: |
           cd tcharl.ansible_routing
-          sudo tox -e test-exec
+          sudo uv tool run --python 3.13 --with tox tox -e test-exec
