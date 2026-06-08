@@ -35,7 +35,7 @@ provisioner:
     ANSIBLE_VERBOSITY: 2
   config_options:
     defaults:
-      remote_tmp: /tmp
+      remote_tmp: /var/tmp/ansible-remote
 verifier:
   name: testinfra
   env:
