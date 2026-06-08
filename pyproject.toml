@@ -32,8 +32,8 @@ dev = [
     "yamllint",
     "tox",
     "pytest-testinfra",
-    "molecule>=6.0.0,<25.0",
-    "molecule-plugins[podman]",
+    "molecule>=25.0,<26.0",
+    "molecule-plugins[podman]==25.8.12",
     "ansible-lint==26.4.0 ; platform_system != 'Windows'",
 ]
 
