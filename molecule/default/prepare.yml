@@ -6,5 +6,7 @@
   tasks:
     - name: "wait for systemd to reach multi-user target before converge"
       ansible.builtin.raw: timeout 30 systemctl is-system-running --wait || true
-      changed_when: false
+      register: systemd_status
+      # changed only if the system was not already running when checked, i.e. a real transition (or timeout) happened during this task's window
+      changed_when: "'running' not in systemd_status.stdout"
       become: true
