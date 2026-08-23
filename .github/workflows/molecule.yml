@@ -63,6 +63,13 @@ jobs:
       - name: Install uv
         run: |
           sudo pip install uv
+      - name: Show Podman environment
+        run: |
+          sudo podman version
+          sudo podman info
+          sudo podman ps -a
+          sudo podman network ls
+          sudo podman system connection list
       - name: Test with podman
         env:
           ANSIBLE_REMOTE_TMP: /var/tmp/ansible-remote
