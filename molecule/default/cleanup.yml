@@ -22,4 +22,5 @@
       ansible.builtin.file:
         path: /etc/molecule-sysctl-backup.conf
         state: absent
+      failed_when: false
       become: true
