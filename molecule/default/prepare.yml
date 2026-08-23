@@ -10,3 +10,23 @@
       # changed only if the system was not already running when checked, i.e. a real transition (or timeout) happened during this task's window
       changed_when: "'running' not in systemd_status.stdout"
       become: true
+    - name: "Capture current values of role-managed sysctl keys"
+      ansible.builtin.command: sysctl -n {{ item }}
+      loop:
+        - net.ipv4.ip_forward
+        - net.ipv6.conf.all.forwarding
+        - net.bridge.bridge-nf-call-iptables
+        - net.bridge.bridge-nf-call-ip6tables
+        - net.bridge.bridge-nf-call-arptables
+        - net.netfilter.nf_conntrack_max
+      register: sysctl_backup
+      failed_when: false
+      # read-only: sysctl -n does not modify state
+      changed_when: false
+      become: true
+    - name: "Write sysctl backup file"
+      ansible.builtin.copy:
+        dest: /etc/molecule-sysctl-backup.conf
+        mode: "0600"
+        content: "{{ (sysctl_backup.results | map(attribute='item') | list) | zip(sysctl_backup.results | map(attribute='stdout') | map('default', '__absent__', true) | list) | map('join', '=') | join('\n') | trim }}"
+      become: true

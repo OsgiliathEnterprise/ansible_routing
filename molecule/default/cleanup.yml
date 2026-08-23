@@ -1,0 +1,25 @@
+---
+- name: "Restore machine kernel sysctl values"
+  hosts:
+    - routing.osgiliath.test
+  gather_facts: no
+  # the first cleanup sequence position runs before create, when the container does not exist yet
+  ignore_unreachable: true
+  tasks:
+    - name: "Read sysctl backup"
+      ansible.builtin.slurp:
+        src: /etc/molecule-sysctl-backup.conf
+      register: sysctl_backup
+      failed_when: false
+      become: true
+    - name: "Restore sysctl values captured before converge"
+      ansible.builtin.command: sysctl -w {{ item }}
+      loop: "{{ ((sysctl_backup.content | default('')) | b64decode).splitlines() | reject('contains', '__absent__') | list }}"
+      # best-effort: a failed restore (e.g. a global key from a non-host netns) must not block destroy
+      failed_when: false
+      become: true
+    - name: "Remove sysctl backup file"
+      ansible.builtin.file:
+        path: /etc/molecule-sysctl-backup.conf
+        state: absent
+      become: true

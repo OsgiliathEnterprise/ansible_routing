@@ -1,34 +1,32 @@
 ---
 
-- name: Activate br_netfilter kernel module
+- name: Activate prerequisite kernel modules
   community.general.modprobe:
     name: "{{ item }}"
     state: present
     persistent: present
   loop:
     - "br_netfilter"
+    - "nf_conntrack"
   become: true
-  when: not ansible_facts.virtualization_type == "container"
 
 - name: Permanently allow ipv4 traffic forwarding on host nic
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: '1'
-    sysctl_set: yes
+    sysctl_set: true
     state: present
-    reload: yes
+    reload: true
   become: yes
-  when: not ansible_facts.virtualization_type == "container"
 
 - name: Permanently allow ipv6 traffic forwarding on host nic
   ansible.posix.sysctl:
     name: net.ipv6.conf.all.forwarding
     value: '0'
-    sysctl_set: yes
+    sysctl_set: true
     state: present
-    reload: yes
+    reload: true
   become: yes
-  when: not ansible_facts.virtualization_type == "container"
 
 - name: Activate bridge nf
   ansible.posix.sysctl:
@@ -38,7 +36,6 @@
     state: present
     reload: true
   become: true
-  when: not ansible_facts.virtualization_type == "container"
 
 - name: Activate bridge-nf-call-ip6tables
   ansible.posix.sysctl:
@@ -48,7 +45,6 @@
     state: present
     reload: true
   become: true
-  when: not ansible_facts.virtualization_type == "container"
 
 - name: Activate bridge-nf-call-arptables
   ansible.posix.sysctl:
@@ -58,7 +54,6 @@
     state: present
     reload: true
   become: true
-  when: not ansible_facts.virtualization_type == "container"
 
 - name: Increase conntrack max
   ansible.posix.sysctl:
@@ -67,7 +62,4 @@
     sysctl_set: true
     state: present
     reload: true
-  changed_when: false # TODO improve this, it is not idempotent on some distro
-  failed_when: False # absent on some distro
   become: true
-  when: not ansible_facts.virtualization_type == "container"

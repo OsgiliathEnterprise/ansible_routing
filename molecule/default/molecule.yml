@@ -17,11 +17,14 @@ platforms:
     privileged: True
     command: "/sbin/init"
     systemd: True
+    # host networking: the scenario exercises the podman machine's kernel and NIC, so the
+    # container shares the machine's network namespace (sysctl writes hit the machine,
+    # and global keys such as net.netfilter.nf_conntrack_max are writable)
+    network: host
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - /lib/modules:/lib/modules:ro
     cgroupns_mode: host
-    dns_servers:
-      - 8.8.8.8
 #    capabilities:
 #      - SYS_ADMIN
 #      - CAP_SYS_TIME
