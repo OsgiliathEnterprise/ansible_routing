@@ -31,6 +31,7 @@ RUN dnf -y install systemd python3 python3-libdnf5 procps-ng && \
     ln -sf /dev/null /etc/systemd/system/systemd-resolved.service && \
     ln -sf /dev/null /etc/systemd/system/systemd-networkd.socket && \
     ln -sf /dev/null /etc/systemd/system/NetworkManager-wait-online.service && \
-    ln -sf /dev/null /etc/systemd/system/network-online.target{% if item.command is defined %}
+    ln -sf /dev/null /etc/systemd/system/network-online.target
+{% if item.command is defined %}
 CMD ["{{ item.command }}"]
 {% endif %}
