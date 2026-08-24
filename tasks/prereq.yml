@@ -35,6 +35,8 @@
     sysctl_set: true
     state: present
     reload: true
+  when:
+   - ansible_env.CI is not defined
   become: true
 
 - name: Activate bridge-nf-call-ip6tables
@@ -45,6 +47,8 @@
     state: present
     reload: true
   become: true
+  when:
+   - ansible_env.CI is not defined
 
 - name: Activate bridge-nf-call-arptables
   ansible.posix.sysctl:
@@ -54,6 +58,8 @@
     state: present
     reload: true
   become: true
+  when:
+   - ansible_env.CI is not defined
 
 - name: Increase conntrack max
   ansible.posix.sysctl:

@@ -73,6 +73,7 @@ jobs:
       - name: Test with podman
         env:
           ANSIBLE_REMOTE_TMP: /var/tmp/ansible-remote
+          CI: true
         run: |
           cd tcharl.ansible_routing
           sudo uv tool run --python 3.13 --with tox tox -e test-exec
