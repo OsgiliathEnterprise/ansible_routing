@@ -20,9 +20,6 @@
         - net.bridge.bridge-nf-call-arptables
         - net.netfilter.nf_conntrack_max
       register: sysctl_backup
-      # a sysctl read can hang on some runners (e.g. a stuck module autoload behind the host netns);
-      # bound each read so a single stuck key cannot stall prepare forever
-      timeout: 30
       # best-effort: a key that is absent, or whose read timed out, must not block prepare
       failed_when: false
       # read-only: sysctl -n does not modify state
