@@ -40,7 +40,7 @@ provisioner:
     ANSIBLE_VERBOSITY: 3
     # a sysctl read can hang on some runners (e.g. a stuck module autoload behind the host netns);
     # bound each read so a single stuck key cannot stall prepare forever
-    ANSIBLE_TASK_TIMEOUT: 20
+    ANSIBLE_TASK_TIMEOUT: 40
 
   config_options:
     defaults:
