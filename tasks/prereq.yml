@@ -44,7 +44,9 @@
     state: present
     reload: true
   become: true
-  when: "'br_netfilter' in lsmod_result.stdout"
+  when:
+    - "'br_netfilter' in lsmod_result.stdout"
+    - ansible_env.CI is not defined
 
 - name: Activate bridge-nf-call-ip6tables
   ansible.posix.sysctl:
@@ -54,7 +56,9 @@
     state: present
     reload: true
   become: true
-  when: "'br_netfilter' in lsmod_result.stdout"
+  when:
+    - "'br_netfilter' in lsmod_result.stdout"
+    - ansible_env.CI is not defined
 
 - name: Activate bridge-nf-call-arptables
   ansible.posix.sysctl:
@@ -64,7 +68,9 @@
     state: present
     reload: true
   become: true
-  when: "'br_netfilter' in lsmod_result.stdout"
+  when:
+    - "'br_netfilter' in lsmod_result.stdout"
+    - ansible_env.CI is not defined
 
 - name: Increase conntrack max
   ansible.posix.sysctl:
