@@ -9,6 +9,14 @@
     - "br_netfilter"
     - "nf_conntrack"
   become: true
+  ignore_errors: true
+  register: modprobe_result
+
+- name: Check if br_netfilter module is loaded
+  ansible.builtin.command: lsmod
+  become: true
+  changed_when: false
+  register: lsmod_result
 
 - name: Permanently allow ipv4 traffic forwarding on host nic
   ansible.posix.sysctl:
@@ -36,6 +44,7 @@
     state: present
     reload: true
   become: true
+  when: "'br_netfilter' in lsmod_result.stdout"
 
 - name: Activate bridge-nf-call-ip6tables
   ansible.posix.sysctl:
@@ -45,6 +54,7 @@
     state: present
     reload: true
   become: true
+  when: "'br_netfilter' in lsmod_result.stdout"
 
 - name: Activate bridge-nf-call-arptables
   ansible.posix.sysctl:
@@ -54,6 +64,7 @@
     state: present
     reload: true
   become: true
+  when: "'br_netfilter' in lsmod_result.stdout"
 
 - name: Increase conntrack max
   ansible.posix.sysctl:
