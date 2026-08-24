@@ -22,9 +22,9 @@ platforms:
     # and global keys such as net.netfilter.nf_conntrack_max are writable)
     network: host
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      # - /sys/fs/cgroup:/sys/fs/cgroup:rw
       - /lib/modules:/lib/modules:ro
-    cgroupns_mode: host
+    cgroupns_mode: private
     dns_servers:
       - 8.8.8.8
 #    capabilities:
