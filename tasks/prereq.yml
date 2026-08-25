@@ -80,3 +80,4 @@
     state: present
     reload: "{{ ansible_env.CI is not defined }}"
   become: true
+  when: ansible_env.CI is not defined
