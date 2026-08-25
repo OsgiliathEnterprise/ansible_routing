@@ -26,6 +26,8 @@ platforms:
     cgroupns_mode: private
     dns_servers:
       - 8.8.8.8
+    env:
+      CI: "true"
 #    capabilities:
 #      - SYS_ADMIN
 #      - CAP_SYS_TIME
