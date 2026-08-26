@@ -49,8 +49,8 @@
     reload: "{{ ansible_env.CI is not defined }}"
   become: true
   when:
-    - "'br_netfilter' in lsmod_result.stdout"
     - ansible_env.CI is not defined
+    - "'br_netfilter' in (lsmod_result.stdout | default(''))"
 
 - name: Activate bridge-nf-call-ip6tables
   ansible.posix.sysctl:
@@ -61,8 +61,8 @@
     reload: "{{ ansible_env.CI is not defined }}"
   become: true
   when:
-    - "'br_netfilter' in lsmod_result.stdout"
     - ansible_env.CI is not defined
+    - "'br_netfilter' in (lsmod_result.stdout | default(''))"
 
 - name: Activate bridge-nf-call-arptables
   ansible.posix.sysctl:
@@ -73,8 +73,8 @@
     reload: "{{ ansible_env.CI is not defined }}"
   become: true
   when:
-    - "'br_netfilter' in lsmod_result.stdout"
     - ansible_env.CI is not defined
+    - "'br_netfilter' in (lsmod_result.stdout | default(''))"
 
 - name: Increase conntrack max
   ansible.posix.sysctl:
