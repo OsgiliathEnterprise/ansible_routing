@@ -11,12 +11,14 @@
   become: true
   ignore_errors: true
   register: modprobe_result
+  when: ansible_env.CI is not defined
 
 - name: Check if br_netfilter module is loaded
   ansible.builtin.command: lsmod
   become: true
   changed_when: false
   register: lsmod_result
+  when: ansible_env.CI is not defined
 
 - name: Permanently allow ipv4 traffic forwarding on host nic
   ansible.posix.sysctl:
@@ -24,8 +26,9 @@
     value: '1'
     sysctl_set: true
     state: present
-    reload: "{{ ansible_env.CI is not defined }}"
+    reload: false
   become: yes
+  when: ansible_env.CI is not defined
 
 - name: Permanently allow ipv6 traffic forwarding on host nic
   ansible.posix.sysctl:
@@ -33,8 +36,9 @@
     value: '0'
     sysctl_set: true
     state: present
-    reload: "{{ ansible_env.CI is not defined }}"
+    reload: false
   become: yes
+  when: ansible_env.CI is not defined
 
 - name: Activate bridge nf
   ansible.posix.sysctl:
