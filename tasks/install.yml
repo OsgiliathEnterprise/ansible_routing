@@ -8,6 +8,7 @@
     - hostname
     - firewalld
   become: "{{ firewalld_become }}"
+  when: ansible_env.CI is not defined
 
 - name: Install | enable and start firewalld
   ansible.builtin.service:
