@@ -16,3 +16,4 @@
     state: started
     enabled: true
   become: "{{ firewalld_become }}"
+  when: ansible_env.CI is not defined
