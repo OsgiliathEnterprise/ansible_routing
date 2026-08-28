@@ -21,6 +21,7 @@
     zone: "{{ routing_zone }}"
     permanent: true
     masquerade: "{{ zone.masquerade | default(false) }}"
+    immediate: "{{ firewalld_immediate }}"
     state: enabled
   become: "{{ firewalld_become }}"
 
@@ -54,6 +55,7 @@
 - name: Zone | unaffect nics from default zone
   ansible.posix.firewalld:
     zone: "public"
+    immediate: "{{ firewalld_immediate }}"
     interface: "{{ nic_to_set }}"
     state: disabled
     permanent: true
@@ -69,6 +71,7 @@
   ansible.posix.firewalld:
     zone: "{{ routing_zone }}"
     permanent: true
+    immediate: "{{ firewalld_immediate }}"
     interface: "{{ nic_to_set }}"
     state: enabled
   loop: "{{ zone.nics | list }}"
@@ -81,3 +84,4 @@
   ansible.builtin.command: firewall-cmd --reload
   become: "{{ firewalld_become }}"
   changed_when: true
+  when: not firewalld_immediate

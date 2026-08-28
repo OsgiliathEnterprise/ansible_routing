@@ -40,4 +40,5 @@
       log prefix={{ forward_rule.port_forward_rule }}
     zone: "{{ zone.name | default(firewalld_default_zone) }}"
     permanent: yes
+    immediate: "{{ firewalld_immediate }}"
     state: enabled
