@@ -38,7 +38,7 @@
 
 - name: Services-ports | open port
   ansible.posix.firewalld:
-    port: "{{ enabled_port_range.port_range }}/{{ enabled_port.protocol | default('tcp') }}"
+    port: "{{ enabled_port_range.port_range }}/{{ enabled_port_range.protocol | default('tcp') }}"
     zone: "{{ zone.name | default(firewalld_default_zone) }}"
     permanent: true
     immediate: true
