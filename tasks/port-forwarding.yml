@@ -11,7 +11,6 @@
       log prefix={{ forward_rule.port_forward_rule }}
     zone: "{{ zone.name | default(firewalld_default_zone) }}"
     permanent: yes
-    immediate: yes
     state: enabled
   when:
    - not forward_rule.to_address is defined
@@ -40,6 +39,5 @@
       log prefix={{ forward_rule.port_forward_rule }}
     zone: "{{ zone.name | default(firewalld_default_zone) }}"
     permanent: yes
-    immediate: yes
     state: enabled
   when: forward_rule.to_address is defined

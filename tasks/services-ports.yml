@@ -4,7 +4,6 @@
   ansible.posix.firewalld:
     zone: "{{ zone.name | default(firewalld_default_zone) }}"
     permanent: true
-    immediate: true
     service: "{{ enabled_service.service }}"
     state: enabled
   become: "{{ firewalld_become }}"
@@ -16,7 +15,6 @@
   ansible.posix.firewalld:
     zone: "{{ zone.name | default(firewalld_default_zone) }}"
     permanent: true
-    immediate: true
     source: "{{ enabled_source.source }}"
     state: enabled
   become: "{{ firewalld_become }}"
@@ -29,7 +27,6 @@
     port: "{{ enabled_port.port }}/{{ enabled_port.protocol | default('tcp') }}"
     zone: "{{ zone.name | default(firewalld_default_zone) }}"
     permanent: true
-    immediate: true
     state: enabled
   become: "{{ firewalld_become }}"
   loop: "{{ zone.enabled_ports | default([]) }}"
@@ -41,7 +38,6 @@
     port: "{{ enabled_port_range.port_range }}/{{ enabled_port.protocol | default('tcp') }}"
     zone: "{{ zone.name | default(firewalld_default_zone) }}"
     permanent: true
-    immediate: true
     state: enabled
   become: "{{ firewalld_become }}"
   loop: "{{ zone.enabled_port_ranges | default([]) }}"
