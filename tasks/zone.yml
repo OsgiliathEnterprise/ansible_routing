@@ -1,15 +1,5 @@
 ---
 
-- name: Zone | gather host facts
-  ansible.builtin.setup:
-  register: hostfacts
-
-- name: Zone | debug host facts
-  ansible.builtin.debug:
-    var: hostfacts
-    verbosity: 3
-  when: not zone.nics is defined
-
 - name: Zone | set zone nics from host facts if not defined
   ansible.builtin.set_fact:
     routing_zone: "{{ zone.name | default(firewalld_default_zone) }}"
