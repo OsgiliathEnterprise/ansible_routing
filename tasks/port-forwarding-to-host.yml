@@ -42,3 +42,18 @@
     permanent: yes
     immediate: "{{ firewalld_immediate }}"
     state: enabled
+  when: firewalld_immediate
+
+- name: Port-forwarding | Redirect ip (CLI)
+  become: "{{ firewalld_become }}"
+  ansible.builtin.shell: >
+    firewall-cmd --permanent
+    --zone={{ zone.name | default(firewalld_default_zone) }}
+    --add-rich-rule='rule family={{ forward_rule.family | default("ipv4") }}
+    forward-port port={{ forward_rule.from_port | int }}
+    protocol={{ forward_rule.protocol | default("tcp") }}
+    to-addr={{ forwardrule_address.msg | ansible.utils.ipaddr }}
+    to-port={{ forward_rule.to_port | int }}
+    log prefix={{ forward_rule.port_forward_rule }}' || true
+  changed_when: false
+  when: not firewalld_immediate

@@ -15,6 +15,13 @@
     state: present
     permanent: true
   become: "{{ firewalld_become }}"
+  when: firewalld_immediate
+
+- name: Zone | create zones - activate zone (CLI)
+  ansible.builtin.shell: firewall-cmd --permanent --new-zone={{ routing_zone }} || true
+  become: "{{ firewalld_become }}"
+  changed_when: false
+  when: not firewalld_immediate
 
 - name: Zone | create zones
   ansible.posix.firewalld:
@@ -24,6 +31,15 @@
     immediate: "{{ firewalld_immediate }}"
     state: enabled
   become: "{{ firewalld_become }}"
+  when: firewalld_immediate
+
+- name: Zone | create zones (CLI)
+  ansible.builtin.shell: >
+    firewall-cmd --permanent --zone={{ routing_zone }}
+    {{ '--add-masquerade' if (zone.masquerade | default(false)) else '--remove-masquerade' }} || true
+  become: "{{ firewalld_become }}"
+  changed_when: false
+  when: not firewalld_immediate
 
 - name: Zone | debug zone
   ansible.builtin.debug:
@@ -65,7 +81,20 @@
   when:
    - zone.nics is defined
    - routing_zone != "public"
+   - firewalld_immediate
   become: "{{ firewalld_become }}"
+
+- name: Zone | unaffect nics from default zone (CLI)
+  ansible.builtin.shell: firewall-cmd --permanent --zone=public --remove-interface={{ nic_to_set }} || true
+  loop: "{{ zone.nics | list }}"
+  loop_control:
+    loop_var: nic_to_set
+  when:
+   - zone.nics is defined
+   - routing_zone != "public"
+   - not firewalld_immediate
+  become: "{{ firewalld_become }}"
+  changed_when: false
 
 - name: Zone | affect nics
   ansible.posix.firewalld:
@@ -77,8 +106,21 @@
   loop: "{{ zone.nics | list }}"
   loop_control:
     loop_var: nic_to_set
-  when: zone.nics is defined
+  when:
+   - zone.nics is defined
+   - firewalld_immediate
   become: "{{ firewalld_become }}"
+
+- name: Zone | affect nics (CLI)
+  ansible.builtin.shell: firewall-cmd --permanent --zone={{ routing_zone }} --add-interface={{ nic_to_set }} || true
+  loop: "{{ zone.nics | list }}"
+  loop_control:
+    loop_var: nic_to_set
+  when:
+   - zone.nics is defined
+   - not firewalld_immediate
+  become: "{{ firewalld_become }}"
+  changed_when: false
 
 - name: Zone | reload firewalld to apply permanent rules
   ansible.builtin.command: firewall-cmd --reload

@@ -11,6 +11,18 @@
   loop: "{{ zone.enabled_services | default([]) }}"
   loop_control:
     loop_var: enabled_service
+  when: firewalld_immediate
+
+- name: Services-ports | enable services (CLI)
+  ansible.builtin.shell: >
+    firewall-cmd --permanent --zone={{ zone.name | default(firewalld_default_zone) }}
+    --add-service={{ enabled_service.service }} || true
+  become: "{{ firewalld_become }}"
+  loop: "{{ zone.enabled_services | default([]) }}"
+  loop_control:
+    loop_var: enabled_service
+  changed_when: false
+  when: not firewalld_immediate
 
 - name: Services-ports | add sources
   ansible.posix.firewalld:
@@ -23,6 +35,18 @@
   loop: "{{ zone.enabled_sources | default([]) }}"
   loop_control:
     loop_var: enabled_source
+  when: firewalld_immediate
+
+- name: Services-ports | add sources (CLI)
+  ansible.builtin.shell: >
+    firewall-cmd --permanent --zone={{ zone.name | default(firewalld_default_zone) }}
+    --add-source={{ enabled_source.source }} || true
+  become: "{{ firewalld_become }}"
+  loop: "{{ zone.enabled_sources | default([]) }}"
+  loop_control:
+    loop_var: enabled_source
+  changed_when: false
+  when: not firewalld_immediate
 
 - name: Services-ports | open port
   ansible.posix.firewalld:
@@ -35,10 +59,22 @@
   loop: "{{ zone.enabled_ports | default([]) }}"
   loop_control:
     loop_var: enabled_port
+  when: firewalld_immediate
 
-- name: Services-ports | open port
+- name: Services-ports | open port (CLI)
+  ansible.builtin.shell: >
+    firewall-cmd --permanent --zone={{ zone.name | default(firewalld_default_zone) }}
+    --add-port={{ enabled_port.port }}/{{ enabled_port.protocol | default('tcp') }} || true
+  become: "{{ firewalld_become }}"
+  loop: "{{ zone.enabled_ports | default([]) }}"
+  loop_control:
+    loop_var: enabled_port
+  changed_when: false
+  when: not firewalld_immediate
+
+- name: Services-ports | open port range
   ansible.posix.firewalld:
-    port: "{{ enabled_port_range.port_range }}/{{ enabled_port.protocol | default('tcp') }}"
+    port: "{{ enabled_port_range.port_range }}/{{ enabled_port_range.protocol | default('tcp') }}"
     zone: "{{ zone.name | default(firewalld_default_zone) }}"
     permanent: true
     immediate: "{{ firewalld_immediate }}"
@@ -47,3 +83,15 @@
   loop: "{{ zone.enabled_port_ranges | default([]) }}"
   loop_control:
     loop_var: enabled_port_range
+  when: firewalld_immediate
+
+- name: Services-ports | open port range (CLI)
+  ansible.builtin.shell: >
+    firewall-cmd --permanent --zone={{ zone.name | default(firewalld_default_zone) }}
+    --add-port={{ enabled_port_range.port_range }}/{{ enabled_port_range.protocol | default('tcp') }} || true
+  become: "{{ firewalld_become }}"
+  loop: "{{ zone.enabled_port_ranges | default([]) }}"
+  loop_control:
+    loop_var: enabled_port_range
+  changed_when: false
+  when: not firewalld_immediate
